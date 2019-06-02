@@ -1,6 +1,6 @@
 # Tetris-Typing
 ### This program uses [DxLib](https://dxlib.xsrv.jp/).
-##### And this is spaghetti program. (a little bit)
+##### And spaghetti program. (**a little bit**)
 
 
 -----
