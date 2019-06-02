@@ -6,7 +6,7 @@
 > This app is a typing game like *Tetris*.
 
 ## Screen Shots
- ![Scrn shot0](/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_0.png?raw=true, "screenshot_0.png")
+ ![Scrn shot0](/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_0.png)
 
 
 -----
