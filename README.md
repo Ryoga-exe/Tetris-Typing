@@ -5,6 +5,7 @@
 ## About This App.
 > This app is a typing game like *Tetris*.
 
+## Screen Shots
 
 -----
 ### このプログラムは[DxLib](https://dxlib.xsrv.jp/)を使用しています。
