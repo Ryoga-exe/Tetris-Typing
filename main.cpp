@@ -46,7 +46,7 @@ int  WindowInit()
 	if (ChangeWindowMode(TRUE) != 0 || SetWindowSizeChangeEnableFlag(TRUE) != 0 || DxLib_Init() != 0) {
 		MessageBox(
 			NULL,
-			TEXT("ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚\nã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚"),
+			TEXT("ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B\nƒEƒBƒ“ƒhƒE‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½B"),
 			TEXT("ERROR"),
 			MB_OK | MB_ICONERROR
 		);
@@ -55,7 +55,7 @@ int  WindowInit()
 	if (SetDrawScreen(DX_SCREEN_BACK) != 0) {
 		MessageBox(
 			NULL,
-			TEXT("ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚\nã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸã€‚"),
+			TEXT("ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B\nƒEƒBƒ“ƒhƒE‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½B"),
 			TEXT("ERROR"),
 			MB_OK | MB_ICONERROR
 		);
@@ -510,7 +510,7 @@ char SceneSwitch(char Scene)
 						_topscore = i + 1;
 						i = 3;
 					}
-				if (_topscore > 0) {  // ãƒ¡ãƒ¢ï¼š1 ä½ã«ãƒ©ãƒ³ã‚¯ã‚¤ãƒ³ã—ãŸæ™‚ã®å‡¦ç†ãŒé•ã†ã€‚
+				if (_topscore > 0) {  // ƒƒ‚F1 ˆÊ‚Éƒ‰ƒ“ƒNƒCƒ“‚µ‚½‚Ìˆ—‚ªˆá‚¤B
 					if (_topscore == 1) {
 						TopScores[nowSelect].score[_topscore + 1] = TopScores[nowSelect].score[_topscore];
 						strcpyDx(TopScores[nowSelect].name[_topscore + 1], TopScores[nowSelect].name[_topscore]);
@@ -522,7 +522,7 @@ char SceneSwitch(char Scene)
 						strcpyDx(TopScores[nowSelect].name[_topscore], TopScores[nowSelect].name[_topscore - 1]);
 					}
 					TopScores[nowSelect].score[_topscore - 1] = score;
-					// strcpyDx(TopScores[nowSelect].name[_topscore - 1], ""); // for ã§å…¨åˆæœŸåŒ–ã™ã‚‹()
+					// strcpyDx(TopScores[nowSelect].name[_topscore - 1], ""); // for ‚Å‘S‰Šú‰»‚·‚é()
 					for (int i = 0; i <= MAX_NAME_LENGTH; i++)
 						TopScores[nowSelect].name[_topscore - 1][i] = '\0';
 					PlaySoundMem(Musics[5], DX_PLAYTYPE_LOOP);
