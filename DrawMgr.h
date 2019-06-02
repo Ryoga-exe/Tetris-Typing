@@ -123,12 +123,13 @@ enum SCENES {
 	DETAIL_SCORE
 };
 
-void SetStagePart(int x, int y, int _Part);
+void SetStagePart(int x, int y, int _Part, bool setFlag = true);
 int  GetStagePart(int x, int y);
-void setStage(const int _stage[STAGE_HEIGHT][STAGE_WIDTH], int Fill);
+void setStage(const int _stage[STAGE_HEIGHT][STAGE_WIDTH], int Fill = -2);
+void SetStageScene(char Scene);
 void drawPart(int _x, int _y, const char _part[PART_SIZE][PART_SIZE], int ZoomRate = ZOOM_RATE);
 void drawPart(int _x, int _y, short PartNumber, char PartType, int ZoomRate = ZOOM_RATE);
 void drawStage();
 void drawNumbers(int x, int y, int number, int length);
-void DrawStringB(char x, char y, const char string[]);
-void DrawStringG(char x, char y, const char string[]);
+bool DrawStringB(char x, char y, const char string[], bool drawFlag = true);
+bool DrawStringG(char x, char y, const char string[], bool drawFlag = true);
