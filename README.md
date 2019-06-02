@@ -3,5 +3,5 @@
 
 
 
-# Tetris-Typing
+
 ### このプログラムは[DxLib](https://dxlib.xsrv.jp/)を使用しています。
