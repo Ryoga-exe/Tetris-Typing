@@ -2,7 +2,7 @@
 
 #define WINDOW_WIDTH	160
 #define WINDOW_HEIGHT	144
-#define STAGE_WIDTH		20
+#define STAGE_WIDTH	20
 #define STAGE_HEIGHT	18
 #define FIELD_WIDTH		10
 #define FIELD_HEIGHT	18
