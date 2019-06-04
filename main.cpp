@@ -10,17 +10,51 @@ TCHAR WindowTitle[] = "Tetris Typing";
 
 int count, countWait, score, types,
 	Sounds[9], Musics[6], MusicPosition;
-unsigned int col[] = {
-	0xFFFFFF,
-	0xAAAAAA,
-	0x555555,
-	0x000000
+int ColorType;
+unsigned int col[MAX_COLOR_TYPE][MAX_COLOR] = {
+	{
+		0xFFFFFF,
+		0xAAAAAA,
+		0x555555,
+		0x000000
+	},{
+		0xFFFFFF,
+		0xD6A67E,
+		0x856856,
+		0x000000
+	},{
+		0xFFFFFF,
+		0xCC8888,
+		0x773333,
+		0x000000
+	},{
+		0xFFFFFF,
+		0xAACC88,
+		0x557733,
+		0x000000
+	},{
+		0xFFFFFF,
+		0x88BBCC,
+		0x336677,
+		0x000000
+	},{
+		0xFFFFFF,
+		0xCC88CC,
+		0x773377,
+		0x000000
+	},{
+		0x817E11,
+		0x53663B,
+		0x375147,
+		0x31473D
+	}
 };
 short field[FIELD_HEIGHT][FIELD_WIDTH];
 char nowSelect, _music, level[2];
 bool _pause, _gameover;
 bool WaitingFlug = true;
 bool DebugFlag;
+bool FullScreenFlg = false;
 char _topscore, nowEntering;
 
 typedef struct {
@@ -43,6 +77,7 @@ int  WindowInit()
 	SetWindowText(WindowTitle), SetBackgroundColor(0, 0, 0);
 	SetAlwaysRunFlag(TRUE);
 	SetWindowStyleMode(7);
+	SetMouseDispFlag(TRUE);
 	if (ChangeWindowMode(TRUE) != 0 || SetWindowSizeChangeEnableFlag(TRUE) != 0 || DxLib_Init() != 0) {
 		MessageBox(
 			NULL,
@@ -62,6 +97,12 @@ int  WindowInit()
 		DxLib_End();
 		return 1;
 	}
+	return 0;
+}
+int  WindowDrawInit() {
+	SetFullScreenScalingMode(DX_FSSCALINGMODE_NEAREST);
+	SetDrawScreen(DX_SCREEN_BACK);
+	SetMouseDispFlag(TRUE);
 	return 0;
 }
 int  LoadMem()
@@ -234,8 +275,13 @@ int  DataSave() {
 	return 0;
 }
 void DrawDimsStatus(unsigned int _font_color = 0xffffff) {
+	int MouseX, MouseY;
+	GetMouseStage(&MouseX, &MouseY);
+	int X = MouseX * PART_SIZE * ZOOM_RATE, Y = MouseY * PART_SIZE * ZOOM_RATE;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(X, Y, X + PART_SIZE * ZOOM_RATE, Y + PART_SIZE * ZOOM_RATE, 0xff0000, TRUE);
 	DrawBox(0, 0, WINDOW_HEIGHT * ZOOM_RATE / 2, 226, 0x222222, TRUE);
+	DrawBox(WINDOW_WIDTH * ZOOM_RATE - 50, WINDOW_HEIGHT* ZOOM_RATE - 58, WINDOW_WIDTH * ZOOM_RATE, WINDOW_HEIGHT* ZOOM_RATE, 0U, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawFormatString(0, 0  , _font_color, "count      : %d", count);
 	DrawFormatString(0, 16 , _font_color, "countWait  : %d", countWait);
@@ -251,15 +297,18 @@ void DrawDimsStatus(unsigned int _font_color = 0xffffff) {
 	DrawFormatString(0, 176, _font_color, "_gameover  : %d", _gameover);
 	DrawFormatString(0, 192, _font_color, "_topscore  : %d", _topscore);
 	DrawFormatString(0, 208, _font_color, "nowEntering: %d", nowEntering);
+	DrawFormatString(WINDOW_WIDTH * ZOOM_RATE - 47, WINDOW_HEIGHT* ZOOM_RATE - 53, 0xffffff, "X :%d\nY :%d\nS:%d", MouseX, MouseY, GetStagePart(MouseX, MouseY));
 
 }
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if (WindowInit() || LoadMem()) return 1;
 	char Scene = START_UP; count = countWait = _music = nowSelect = level[0] = level[1] = 0;
+	ColorType = 0;
 	DebugFlag = false;
-
+	FullScreenFlg = false;
 	while (!ScreenFlip() && !ProcessMessage() && !ClearDrawScreen() && !KeyUpdate() && FPSUpdate()) {
+		
 		Scene = SceneSwitch(Scene);
 		if (_pause) pause();
 		
@@ -274,7 +323,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		
 		if (Keyboard_Get(KEY_INPUT_F3) == 1) DebugFlag ^= 1;
-
 	}
 	InitSoundMem();
 	DxLib_End();
@@ -284,8 +332,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	return 0;
 }
-
-
 
 char SceneSwitch(char Scene)
 {
@@ -321,14 +367,106 @@ char SceneSwitch(char Scene)
 			if (!count) count = 1;
 			else Keyboard_Set(KEY_INPUT_RETURN, 1);
 		if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
-			nowSelect = 0;
-			StopSoundMem(Musics[0]);
-			if (!count) return MENU_GAME_TYPE;
+			nowSelect = countWait = 0;
+			if (!count) {
+				StopSoundMem(Musics[0]);
+				return MENU_GAME_TYPE;
+			}
 			else return SETTING;
 		}
 		break;
 	case SETTING:
+		GetMouseStage(&MouseX, &MouseY);
+		if (count <= 18 || nowSelect) {
+			if (FullScreenFlg) DrawStringB(5, 6, "YES");
+			else DrawStringB(13, 6, "NO");
+		}
+		if (count <= 18 || !nowSelect) {
+			if (ColorType == 0) DrawStringB(3, 12, "DE");
+			else if (ColorType > 0 && ColorType < 7)
+				drawNumbers(4 + ColorType * 2, 12, ColorType, 1);
+		}
 
+		if (!nowSelect) {
+			if (Keyboard_Get(KEY_INPUT_LEFT) == 1 || Keyboard_Get(KEY_INPUT_RIGHT) == 1) {
+				FullScreenFlg ^= 1;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				ChangeWindowMode(!FullScreenFlg);
+				WindowDrawInit();
+			}
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				FullScreenFlg = 0;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				ChangeWindowMode(!FullScreenFlg);
+				WindowDrawInit();
+			}
+			if (Keyboard_Get(KEY_INPUT_DOWN) == 1) {
+				nowSelect = 1;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			}
+		}
+
+		else {
+			if (Keyboard_Get(KEY_INPUT_LEFT) == 1) {
+				ColorType = (ColorType + 6) % 7;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				SetColor(col[ColorType]);
+			}
+			if (Keyboard_Get(KEY_INPUT_RIGHT) == 1) {
+				ColorType = (ColorType + 1) % 7;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				SetColor(col[ColorType]);
+			}
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				ColorType = 0;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				SetColor(col[ColorType]);
+			}
+			if (Keyboard_Get(KEY_INPUT_UP) == 1) {
+				nowSelect = 0;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			}
+		}
+
+		if (MouseX > 10 && MouseX < 17 && MouseY == 6  && Mouse_Get(M_LEFT) == 1) {
+			nowSelect = 0;
+			FullScreenFlg = 0;
+			PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			ChangeWindowMode(!FullScreenFlg);
+			WindowDrawInit();
+		}
+		if (MouseX > 2  && MouseX < 9  && MouseY == 6  && Mouse_Get(M_LEFT) == 1) {
+			nowSelect = 0;
+			FullScreenFlg = 1;
+			PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			ChangeWindowMode(!FullScreenFlg);
+			WindowDrawInit();
+		}
+
+		if (MouseX > 2  && MouseX < 5  && MouseY == 12 && Mouse_Get(M_LEFT) == 1) {
+			nowSelect = 1;
+			ColorType = 0;
+			PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			SetColor(col[ColorType]);
+		}
+		if (MouseX > 5 && MouseX < 17 && MouseY == 12 && Mouse_Get(M_LEFT) == 1) {
+			if (MouseX % 2 == 0) {
+				nowSelect = 1;
+				ColorType = (MouseX - 4) / 2;
+				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+				SetColor(col[ColorType]);
+			}
+		}
+
+
+		if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) {
+			StopSoundMem(Musics[0]);
+			PlaySoundMem(Musics[0], DX_PLAYTYPE_LOOP);
+			count = 0;
+			return TITLE;
+		}
+
+		count >= 36 ? count = 0 : count++;
 		break;
 	case MENU_GAME_TYPE:
 		GetMouseStage(&MouseX, &MouseY);
@@ -371,7 +509,32 @@ char SceneSwitch(char Scene)
 				else nowSelect -= 2;
 			}
 			if (Keyboard_Get(KEY_INPUT_Z) == 1) nowSelect -= 2;
+			
 		}
+
+		if (MouseX > 2  && MouseX < 9  && MouseY == 12 && Mouse_Get(M_LEFT) == 1) {
+			if (nowSelect < 2) nowSelect += 2;
+			if (_music != 0) StopSoundMem(Musics[1 + _music]);
+			_music = 0, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+		}
+		if (MouseX > 10 && MouseX < 17 && MouseY == 12 && Mouse_Get(M_LEFT) == 1) {
+			if (nowSelect < 2) nowSelect += 2;
+			if (_music != 1) StopSoundMem(Musics[1 + _music]);
+			_music = 1, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+		}
+		if (MouseX > 2  && MouseX < 9  && MouseY == 14 && Mouse_Get(M_LEFT) == 1) {
+			if (nowSelect < 2) nowSelect += 2;
+			if (_music != 2) StopSoundMem(Musics[1 + _music]);
+			_music = 2, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+		}
+		if (MouseX > 10 && MouseX < 17 && MouseY == 14 && Mouse_Get(M_LEFT) == 1) {
+			if (nowSelect < 2) nowSelect += 2;
+			if (_music != 3) StopSoundMem(Musics[1 + _music]);
+			_music = 3, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+		}
+
+
+
 		if (MouseX > 2 && MouseX < 10 && MouseY == 5 && Mouse_Get(M_LEFT) == 1 && nowSelect != 0) nowSelect = 0, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
 		if (MouseX > 10 && MouseX < 17 && MouseY == 5 && Mouse_Get(M_LEFT) == 1 && nowSelect != 1) nowSelect = 1, PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
 		if (Keyboard_Get(KEY_INPUT_RETURN) == 1 || (nowSelect > 1 && Keyboard_Get(KEY_INPUT_X) == 1)) {
@@ -398,6 +561,13 @@ char SceneSwitch(char Scene)
 				SoftInit();
 				return START_UP;
 			}
+		}
+
+		if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) {
+			StopSoundMem(Musics[1 + _music]);
+			PlaySoundMem(Musics[0], DX_PLAYTYPE_LOOP);
+			count = 0;
+			return TITLE;
 		}
 
 		break;
@@ -432,7 +602,7 @@ char SceneSwitch(char Scene)
 			if (Keyboard_Get(KEY_INPUT_LEFT) == 1 && nowSelect - 1 >= 0) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect--;
 			if (Keyboard_Get(KEY_INPUT_DOWN) == 1 && nowSelect != 2) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect = 2;
 			if (Keyboard_Get(KEY_INPUT_UP) == 1 && nowSelect != 0) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect = 0;
-			if (Keyboard_Get(KEY_INPUT_Z) == 1) {
+			if (Keyboard_Get(KEY_INPUT_Z) == 1 || Keyboard_Get(KEY_INPUT_ESCAPE) == 1) {
 				level[0] = nowSelect;
 				nowSelect = 0;
 				return MENU_GAME_TYPE;
@@ -510,7 +680,7 @@ char SceneSwitch(char Scene)
 						_topscore = i + 1;
 						i = 3;
 					}
-				if (_topscore > 0) {  // メモ：1 位にランクインした時の処理が違う。
+				if (_topscore > 0) {
 					if (_topscore == 1) {
 						TopScores[nowSelect].score[_topscore + 1] = TopScores[nowSelect].score[_topscore];
 						strcpyDx(TopScores[nowSelect].name[_topscore + 1], TopScores[nowSelect].name[_topscore]);
@@ -522,7 +692,7 @@ char SceneSwitch(char Scene)
 						strcpyDx(TopScores[nowSelect].name[_topscore], TopScores[nowSelect].name[_topscore - 1]);
 					}
 					TopScores[nowSelect].score[_topscore - 1] = score;
-					// strcpyDx(TopScores[nowSelect].name[_topscore - 1], ""); // for で全初期化する()
+					
 					for (int i = 0; i <= MAX_NAME_LENGTH; i++)
 						TopScores[nowSelect].name[_topscore - 1][i] = '\0';
 					PlaySoundMem(Musics[5], DX_PLAYTYPE_LOOP);
@@ -545,7 +715,7 @@ char SceneSwitch(char Scene)
 void startup(int x, int counting)
 {
 	setStage(nullptr, NONE);
-	DrawBox(0, 0, WINDOW_WIDTH * ZOOM_RATE, WINDOW_HEIGHT * ZOOM_RATE, col[0], TRUE);
+	DrawBox(0, 0, WINDOW_WIDTH * ZOOM_RATE, WINDOW_HEIGHT * ZOOM_RATE, col[ColorType][0], TRUE);
 	char part[][PART_SIZE][PART_SIZE] = {
 		{
 					{3,3,3,3,3,0,0,0},

@@ -123,6 +123,7 @@ enum SCENES {
 	DETAIL_SCORE
 };
 
+void SetColor(unsigned int _Colors[]);
 void SetStagePart(int x, int y, int _Part, bool setFlag = true);
 int  GetStagePart(int x, int y);
 void setStage(const int _stage[STAGE_HEIGHT][STAGE_WIDTH], int Fill = -2);
