@@ -1,5 +1,5 @@
 # Tetris-Typing
-### This program uses [DxLib](https://dxlib.xsrv.jp/). But This Program doesn't use any image files.
+### This program uses [DxLib](https://dxlib.xsrv.jp/). But doesn't use any image files.
 ##### And spaghetti program. (**a little bit**)
 
 ## About This App.
