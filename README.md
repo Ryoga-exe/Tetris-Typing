@@ -4,6 +4,12 @@
 
 ## About This App.
 > This app is a typing game like *Tetris*.
+> Basically, the rule of this game is TETRIS + TYPING-GAME.
+> Type words before they are dropped. 
+> If the words reach the top of the screen, GAME OVER...
+> TYPE-A is Endless Mode.
+> TYPE-B is Time Attack Mode. (Score Attack)
+
 
 ## Screen Shots
  ![Scrn shot0](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_0.png)
@@ -16,3 +22,8 @@
 
 ## このAppについて
 > このAppは*テトリス*に似たタイピングゲームです。
+> 基本的には、テトリスのルールとタイピングゲームの組み合わせです。
+> 単語が落ちてくる前に、タイプしてください。
+> 単語が一番上に到達してしまうとゲームオーバーです。
+> TYPE-A は、エンドレスモードです。
+> TYPE-B は、タイムアタックモードです。（スコアアタック）
