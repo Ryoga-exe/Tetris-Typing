@@ -17,6 +17,7 @@
  ![Scrn shot1](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_2.png)
 
 ## How To Download
+>Just Download 'Release' File.
 -----
 ### このプログラムは[DxLib](https://dxlib.xsrv.jp/)を使用しています。ですが、一切画像ファイルを使用していません。
 ##### ※多少スパゲッティコード
