@@ -50,7 +50,7 @@ unsigned int col[MAX_COLOR_TYPE][MAX_COLOR] = {
 	}
 };
 short field[FIELD_HEIGHT][FIELD_WIDTH];
-char nowSelect, _music, level[2];
+char nowSelect, _music, level[2], speed;
 bool _pause, _gameover;
 bool WaitingFlug = true;
 bool DebugFlag;
@@ -69,16 +69,25 @@ unsigned char WM, wordSelect, _wordsize;
 char words[WORDS_MAX][WORD_SIZE], inWords[32], nowIn, wordY, wordin;
 TopScore_t TopScores[6];
 
+int  messageBoxYN(const char Text[], const char Title[]) {
+	return MessageBox(
+		NULL,
+		TEXT(Text),
+		TEXT(Title),
+		MB_YESNO | MB_ICONQUESTION);
+}
 int  WindowInit()
 {
 	SetOutApplicationLogValidFlag(FALSE);
+	if (messageBoxYN("フルスクリーンモードで起動しますか？", "スクリーン設定") == IDNO) ChangeWindowMode(TRUE);
+	else FullScreenFlg = true;
 	SetGraphMode(WINDOW_WIDTH * ZOOM_RATE, WINDOW_HEIGHT * ZOOM_RATE, 32);
 	SetFullScreenScalingMode(DX_FSSCALINGMODE_NEAREST);
 	SetWindowText(WindowTitle), SetBackgroundColor(0, 0, 0);
 	SetAlwaysRunFlag(TRUE);
 	SetWindowStyleMode(7);
 	SetMouseDispFlag(TRUE);
-	if (ChangeWindowMode(TRUE) != 0 || SetWindowSizeChangeEnableFlag(TRUE) != 0 || DxLib_Init() != 0) {
+	if (SetWindowSizeChangeEnableFlag(TRUE) != 0 || DxLib_Init() != 0) {
 		MessageBox(
 			NULL,
 			TEXT("エラーが発生しました。\nウィンドウの生成に失敗しました。"),
@@ -183,15 +192,16 @@ int  LoadMem()
 	
 	for (int i = 0; i < 6; i++)
 		for (int j = 0; j < 3; j++)
-			if (TopScores[i].name[j][0] == '\0') strcpyDx(TopScores[i].name[j], "*");
+			if (TopScores[i].name[j][0] == '\0') strcpyDx(TopScores[i].name[j], "");
 
 	return 0;
 }
-void GameInit() {
-	types = score = count = _pause = _gameover = 0;
+void GameInit(int swth) {
+	types = score = count = _pause = _gameover = _topscore = nowEntering = 0;
 	wordY = 0;
+	speed = 60;
 	wordin = '\0';
-	level[0] = nowSelect;
+	level[swth] = 0;
 	wordSelect = GetRand(WM);
 	_wordsize = (unsigned char)strlen(words[wordSelect]);
 	for (int i = 0; i < FIELD_HEIGHT; i++)
@@ -200,7 +210,28 @@ void GameInit() {
 }
 void SoftInit() {
 	count = countWait = _music = nowSelect = level[0] = level[1] = 0;
-	GameInit();
+	GameInit(0);
+}
+void SpeedUpdate(int level) {
+	switch (level){
+	case 0 : speed = 60; break;
+	case 1 : speed = 50; break;
+	case 2 : speed = 45; break;
+	case 3 : speed = 40; break;
+	case 4 : speed = 35; break;
+	case 5 : speed = 30; break;
+	case 6 : speed = 27; break;
+	case 7 : speed = 25; break;
+	case 8 : speed = 23; break;
+	case 9 : speed = 20; break;
+	case 10: speed = 17; break;
+	case 11: speed = 15; break;
+	case 12: speed = 13; break;
+	case 13: speed = 10; break;
+	case 14: speed =  7; break;
+	case 15: speed =  5; break;
+	default: speed = 60; break;
+	}
 }
 char SceneSwitch(char Scene);
 void startup(int x, int counting);
@@ -219,7 +250,7 @@ void EnterPause() {
 		}
 	}
 }
-void EnteredWord() {
+void EnteredWord(int swth) {
 	if (nowIn == _wordsize) {
 		wordSelect = GetRand(WM);
 		_wordsize = (unsigned char)strlen(words[wordSelect]);
@@ -229,9 +260,10 @@ void EnteredWord() {
 		if (wordY < 14) adding = 100;
 		if (wordY < 9)  adding = 200;
 		if (wordY < 5)  adding = 300;
-		score += adding * (level[0] + 1);
+		score += adding * (level[swth] + 1);
 		wordY = 0;
-		if (types % 20 == 0 && level[0] < 20) level[0]++, PlaySoundMem(Sounds[7], DX_PLAYTYPE_BACK);
+		if (types % 20 == 0 && level[swth] < 15) level[swth]++, PlaySoundMem(Sounds[7], DX_PLAYTYPE_BACK);
+		SpeedUpdate(level[swth]);
 		for (int i = 0; i < 11; i++)
 			inWords[i] = '\0';
 		PlaySoundMem(Sounds[2], DX_PLAYTYPE_BACK);
@@ -244,7 +276,10 @@ char EnterName() {
 
 	if (wordin == NULL || wordin < CTRL_CODE_CMP) return NULL;
 
-	if (DrawStringB(0, 0, &wordin, false)) return NULL;
+	char wordIIn[] = { wordin, '\0' };
+	if (DrawStringB(0, 0, wordIIn, false)) return NULL;
+
+	// if (!(wordin == ' ' || wordin == '-' || wordin == '!' || wordin == '#' || wordin == '$' || wordin == '&' || (wordin <= '9' && wordin >= '0') || (wordin >= 'A' && wordin <= 'Z') || (wordin >= 'a' && wordin <= 'z')))return NULL;
 
 	return wordin; // It will be changed
 }
@@ -280,7 +315,7 @@ void DrawDimsStatus(unsigned int _font_color = 0xffffff) {
 	int X = MouseX * PART_SIZE * ZOOM_RATE, Y = MouseY * PART_SIZE * ZOOM_RATE;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	DrawBox(X, Y, X + PART_SIZE * ZOOM_RATE, Y + PART_SIZE * ZOOM_RATE, 0xff0000, TRUE);
-	DrawBox(0, 0, WINDOW_HEIGHT * ZOOM_RATE / 2, 226, 0x222222, TRUE);
+	DrawBox(0, 0, WINDOW_HEIGHT * ZOOM_RATE / 2, 240, 0x222222, TRUE);
 	DrawBox(WINDOW_WIDTH * ZOOM_RATE - 50, WINDOW_HEIGHT* ZOOM_RATE - 58, WINDOW_WIDTH * ZOOM_RATE, WINDOW_HEIGHT* ZOOM_RATE, 0U, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawFormatString(0, 0  , _font_color, "count      : %d", count);
@@ -297,6 +332,7 @@ void DrawDimsStatus(unsigned int _font_color = 0xffffff) {
 	DrawFormatString(0, 176, _font_color, "_gameover  : %d", _gameover);
 	DrawFormatString(0, 192, _font_color, "_topscore  : %d", _topscore);
 	DrawFormatString(0, 208, _font_color, "nowEntering: %d", nowEntering);
+	DrawFormatString(0, 224, _font_color, "speed      : %d", speed);
 	DrawFormatString(WINDOW_WIDTH * ZOOM_RATE - 47, WINDOW_HEIGHT* ZOOM_RATE - 53, 0xffffff, "X :%d\nY :%d\nS:%d", MouseX, MouseY, GetStagePart(MouseX, MouseY));
 
 }
@@ -304,9 +340,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	if (WindowInit() || LoadMem()) return 1;
 	char Scene = START_UP; count = countWait = _music = nowSelect = level[0] = level[1] = 0;
+	speed = 60;
 	ColorType = 0;
 	DebugFlag = false;
-	FullScreenFlg = false;
 	while (!ScreenFlip() && !ProcessMessage() && !ClearDrawScreen() && !KeyUpdate() && FPSUpdate()) {
 		
 		Scene = SceneSwitch(Scene);
@@ -323,6 +359,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		
 		if (Keyboard_Get(KEY_INPUT_F3) == 1) DebugFlag ^= 1;
+
+
+
 	}
 	InitSoundMem();
 	DxLib_End();
@@ -394,7 +433,7 @@ char SceneSwitch(char Scene)
 				ChangeWindowMode(!FullScreenFlg);
 				WindowDrawInit();
 			}
-			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1 || (MouseX > 0 && MouseX < 19 && MouseY == 15 && Mouse_Get(M_LEFT) == 1)) {
 				FullScreenFlg = 0;
 				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
 				ChangeWindowMode(!FullScreenFlg);
@@ -417,7 +456,7 @@ char SceneSwitch(char Scene)
 				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
 				SetColor(col[ColorType]);
 			}
-			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1 || (MouseX > 0 && MouseX < 19 && MouseY == 15 && Mouse_Get(M_LEFT) == 1)) {
 				ColorType = 0;
 				PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
 				SetColor(col[ColorType]);
@@ -458,12 +497,22 @@ char SceneSwitch(char Scene)
 			}
 		}
 
-
-		if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) {
+		if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1 || (MouseX > 0 && MouseX < 19 && MouseY == 16 && Mouse_Get(M_LEFT) == 1)) {
 			StopSoundMem(Musics[0]);
 			PlaySoundMem(Musics[0], DX_PLAYTYPE_LOOP);
 			count = 0;
 			return TITLE;
+		}
+
+		if (WaitingFlug) {
+			countWait++;
+			if (CheckHitKeyAll()) countWait = 0;
+			if (countWait > 9000) count = 0;
+			if (countWait > MAX_WAIT) {
+				StopSoundMem(Musics[0]);
+				SoftInit();
+				return START_UP;
+			}
 		}
 
 		count >= 36 ? count = 0 : count++;
@@ -554,7 +603,7 @@ char SceneSwitch(char Scene)
 
 		if (WaitingFlug) {
 			countWait++;
-			if (CheckHitKeyAll() || Mouse_Get(M_LEFT) > 0) countWait = 0;
+			if (CheckHitKeyAll()) countWait = 0;
 			if (countWait > 9000) count = 0;
 			if (countWait > MAX_WAIT) {
 				StopSoundMem(Musics[1 + _music]);
@@ -608,14 +657,28 @@ char SceneSwitch(char Scene)
 				return MENU_GAME_TYPE;
 			}
 			if (Keyboard_Get(KEY_INPUT_X) == 1 || Keyboard_Get(KEY_INPUT_RETURN) == 1) {
-				GameInit();
+				GameInit(0);
+				if (nowSelect == 1) level[0] = 3;
+				if (nowSelect == 2) level[0] = 5;
+				SpeedUpdate(level[0]);
 				return GAME_A;
 			}
 		}
 		
 		for (int i = 0; i < 3; i++) {
-			if (TopScores[nowSelect].name[i][0] != '*') DrawStringB(4, 13 + i, TopScores[nowSelect].name[i]);
+			if (TopScores[nowSelect].name[i][0] != '\0') DrawStringB(4, 13 + i, TopScores[nowSelect].name[i]);
 			if (TopScores[nowSelect].score[i] != 0) drawNumbers(12, 13 + i, TopScores[nowSelect].score[i], 6);
+		}
+
+		if (WaitingFlug) {
+			countWait++;
+			if (CheckHitKeyAll()) countWait = 0;
+			if (countWait > 9000) count = 0;
+			if (countWait > MAX_WAIT) {
+				StopSoundMem(Musics[1 + _music]);
+				SoftInit();
+				return START_UP;
+			}
 		}
 
 		count >= 36 ? count = 0 : count++;
@@ -633,23 +696,23 @@ char SceneSwitch(char Scene)
 				if (field[i][j - 2] != TRNS) SetStagePart(j, i, field[i][j - 2]);
 		if (!_pause && !_gameover) {
 			wordin = tolower(GetInputChar(TRUE));
-			if (words[wordSelect][nowIn] == wordin && nowIn < 10) {
+			if (words[wordSelect][nowIn] == wordin && nowIn < 11) {
 				inWords[nowIn++] = words[wordSelect][nowIn];
 				score++;
 				PlaySoundMem(Sounds[4], DX_PLAYTYPE_BACK);
 			}
 			else if (wordin != NULL && wordin >= CTRL_CODE_CMP) {
 				PlaySoundMem(Sounds[6], DX_PLAYTYPE_BACK);
-				for (int i = 0; i < 1; i++)
+				for (int i = 0; i < nowSelect + 1; i++)
 					if (wordY + 1 < 18 && field[wordY + 1][0] == NONE) wordY++;
 			}
 
-			EnteredWord();
+			EnteredWord(0);
 
 			DrawStringB(2, wordY, words[wordSelect]);
 			DrawStringG(2, wordY, inWords);
 			
-			if (count % 25 == 0) {
+			if (count % speed == 0) {
 				if (wordY + 1 < 18 && field[wordY + 1][0] == NONE) wordY++, count = 1;
 				else {
 					for (int i = 0; i < FIELD_HEIGHT; i++)
@@ -674,7 +737,7 @@ char SceneSwitch(char Scene)
 		if (_gameover) {
 			gameOver(count, 25);
 			if (count < 150) count++;
-			else if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+			else if (Keyboard_Get(KEY_INPUT_RETURN) == 1 || Mouse_Get(M_LEFT) == 1) {
 				for (int i = 0; i < 3; i++)
 					if (TopScores[nowSelect].score[i] < score) {
 						_topscore = i + 1;
@@ -693,14 +756,32 @@ char SceneSwitch(char Scene)
 					}
 					TopScores[nowSelect].score[_topscore - 1] = score;
 					
+					
+					// strcpyDx(TopScores[nowSelect].name[_topscore - 1], "");
+
 					for (int i = 0; i <= MAX_NAME_LENGTH; i++)
 						TopScores[nowSelect].name[_topscore - 1][i] = '\0';
+
+
 					PlaySoundMem(Musics[5], DX_PLAYTYPE_LOOP);
 				}
 				else PlaySoundMem(Musics[1 + _music], DX_PLAYTYPE_LOOP);
 				nowEntering = 0;
 				wordin = '\0';
 				return MENU_A;
+			}
+		}
+
+		if (_pause || _gameover) {
+			if (WaitingFlug) {
+				countWait++;
+				if (CheckHitKeyAll()) countWait = 0;
+				// if (countWait > 9000) count = 0;
+				if (countWait > MAX_WAIT) {
+					StopSoundMem(Musics[1 + _music]);
+					SoftInit();
+					return START_UP;
+				}
 			}
 		}
 

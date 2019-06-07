@@ -11,6 +11,6 @@
 #define WORD_SIZE		11
 #define WORDS_MAX		256
 #define MAX_WAIT		10800
-#define MAX_NAME_LENGTH 6
+#define MAX_NAME_LENGTH 7
 #define MAX_COLOR		4
 #define MAX_COLOR_TYPE	7
