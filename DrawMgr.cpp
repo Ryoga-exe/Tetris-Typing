@@ -195,7 +195,29 @@ void SetStageScene(char Scene)
 		};
 		setStage(_stage);
 	}break;
-
+	case GAME_B: {
+		int _stage[STAGE_HEIGHT][STAGE_WIDTH] = {
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, BD01, BD02, BD02, BD02, BD02, BD02, BD03},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD04, BC_S, BC_C, BC_O, BC_R, BC_E, BD05},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD06, BD07, BD07, BD07, BD07, BD07, BD08},
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD09, BD10, BD10, BD10, BD10, BD10, BD10},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD01, BD02, BD02, BD02, BD02, BD02, BD03},
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, BD11, BC_L, BC_E, BC_V, BC_E, BC_L, BD12},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD11, NONE, NONE, NONE, NONE, NONE, BD12},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD13, BD14, BD14, BD14, BD14, BD14, BD15},
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, BD11, BC_W, BC_O, BC_R, BC_D, BC_S, BD12},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD11, NONE, NONE, NONE, NONE, NONE, BD12},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD13, BD14, BD14, BD14, BD14, BD14, BD15},
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, BD11, BC_T, BC_I, BC_M, BC_E, NONE, BD12},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD11, NONE, NONE, BCCO, NONE, NONE, BD12},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD16, BD10, BD10, BD10, BD10, BD10, BD17},
+		{BD00, BRC2, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC2, BD21, BLAK, BLAK, BLAK, BLAK, BLAK, BLAK},
+		{BD00, BRC1, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC1, BD21, BLAK, BLAK, BLAK, BLAK, BLAK, BLAK},
+		{BD00, BRC0, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, BRC0, BD21, BLAK, BLAK, BLAK, BLAK, BLAK, BLAK}
+		};
+		setStage(_stage);
+	}break;
 	default:
 		break;
 	}
@@ -4084,6 +4106,59 @@ void drawStage()
 				};
 				drawPart(X, Y, part);
 			} break;
+			case BCCO: {
+				char part[PART_SIZE][PART_SIZE] = {
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				};
+				drawPart(X, Y, part);
+			} break;
+			case BCSM: {
+				char part[PART_SIZE][PART_SIZE] = {
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,0,3,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				};
+				drawPart(X, Y, part);
+			} break;
+			case BCPU: {
+				char part[PART_SIZE][PART_SIZE] = {
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,3,3,3,3,3,3,0},
+				{0,3,3,3,3,3,3,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,3,3,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				};
+				drawPart(X, Y, part);
+			} break;
+			case BCUN: {
+				char part[PART_SIZE][PART_SIZE] = {
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0},
+				{3,3,3,3,3,3,3,3},
+				};
+				drawPart(X, Y, part);
+			} break;
+
 			default:
 				DrawBox(X, Y, X + PART_SIZE * ZOOM_RATE, Y + PART_SIZE * ZOOM_RATE, 0xFF0000, TRUE);
 				break;
@@ -4115,6 +4190,10 @@ bool DrawStringB(char x, char y, const char string[], bool drawFlag)
 		else if (*string == '.') SetStagePart(x, y, BCPR, drawFlag);
 		else if (*string == ',') SetStagePart(x, y, COMA, drawFlag);
 		else if (*string == '\"') SetStagePart(x, y, QOTE, drawFlag);
+		else if (*string == ':') SetStagePart(x, y, BCCO, drawFlag);
+		else if (*string == ';') SetStagePart(x, y, BCSM, drawFlag);
+		else if (*string == '+') SetStagePart(x, y, BCPU, drawFlag);
+		else if (*string == '_') SetStagePart(x, y, BCUN, drawFlag);
 
 		else if (*string <= '9' && *string >= '0') SetStagePart(x, y, BC_0 + (*string - 48), drawFlag);
 		else if (*string >= 'A' && *string <= 'Z') SetStagePart(x, y, BC_A + (*string - 65), drawFlag);

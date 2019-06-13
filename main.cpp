@@ -56,6 +56,7 @@ bool WaitingFlug = true;
 bool DebugFlag;
 bool FullScreenFlg = false;
 char _topscore, nowEntering;
+int timer;
 
 typedef struct {
 	char name[3][MAX_NAME_LENGTH + 1];
@@ -199,10 +200,14 @@ int  LoadMem()
 void GameInit(int swth) {
 	types = score = count = _pause = _gameover = _topscore = nowEntering = 0;
 	wordY = 0;
+	timer = 90;
 	speed = 60;
 	wordin = '\0';
 	level[swth] = 0;
 	wordSelect = GetRand(WM);
+	for (int i = 0; i < 11; i++)
+		inWords[i] = '\0';
+	nowIn = 0;
 	_wordsize = (unsigned char)strlen(words[wordSelect]);
 	for (int i = 0; i < FIELD_HEIGHT; i++)
 		for (int j = 0; j < FIELD_WIDTH; j++)
@@ -361,7 +366,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (Keyboard_Get(KEY_INPUT_F3) == 1) DebugFlag ^= 1;
 
 
-
+		Wait();
 	}
 	InitSoundMem();
 	DxLib_End();
@@ -622,7 +627,7 @@ char SceneSwitch(char Scene)
 		break;
 	case MENU_A:
 		if (_topscore > 0) {
-			if (count <= 18 && nowEntering < 6) SetStagePart(4 + nowEntering, 12 + _topscore, UNDR);
+			if (count <= 18 && nowEntering < MAX_NAME_LENGTH) SetStagePart(4 + nowEntering, 12 + _topscore, UNDR);
 			char inputnm = EnterName();
 
 			if (inputnm != NULL) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
@@ -658,8 +663,8 @@ char SceneSwitch(char Scene)
 			}
 			if (Keyboard_Get(KEY_INPUT_X) == 1 || Keyboard_Get(KEY_INPUT_RETURN) == 1) {
 				GameInit(0);
-				if (nowSelect == 1) level[0] = 3;
-				if (nowSelect == 2) level[0] = 5;
+				if (nowSelect == 1) level[0] = 5;
+				if (nowSelect == 2) level[0] = 10;
 				SpeedUpdate(level[0]);
 				return GAME_A;
 			}
@@ -684,6 +689,68 @@ char SceneSwitch(char Scene)
 		count >= 36 ? count = 0 : count++;
 		break;
 	case MENU_B:
+		if (_topscore > 0) {
+			if (count <= 18 && nowEntering < MAX_NAME_LENGTH) SetStagePart(4 + nowEntering, 12 + _topscore, UNDR);
+			char inputnm = EnterName();
+
+			if (inputnm != NULL) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK);
+			if (inputnm != NULL && inputnm != CTRL_CODE_BS && nowEntering + 1 <= MAX_NAME_LENGTH) {
+				TopScores[nowSelect + 3].name[_topscore - 1][nowEntering] = inputnm;
+				nowEntering++;
+			}
+			else if (inputnm == CTRL_CODE_BS && nowEntering - 1 >= 0) {
+				nowEntering--;
+				TopScores[nowSelect + 3].name[_topscore - 1][nowEntering] = '\0';
+			}
+			else if (Keyboard_Get(KEY_INPUT_RETURN) == 1 && nowEntering > 0) {
+				_topscore = 0;
+				StopSoundMem(Musics[5]);
+				PlaySoundMem(Sounds[2], DX_PLAYTYPE_BACK);
+				PlaySoundMem(Musics[1 + _music], DX_PLAYTYPE_LOOP);
+			}
+		}
+
+		else {
+			if (count <= 18) {
+				if (nowSelect == 0) DrawStringB(5, 6, "EASY");
+				if (nowSelect == 1) DrawStringB(10, 6, "HARD");
+				if (nowSelect == 2) DrawStringB(6, 8, "EXPERT");
+			}
+			if (Keyboard_Get(KEY_INPUT_RIGHT) == 1 && nowSelect + 1 < 3) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect++;
+			if (Keyboard_Get(KEY_INPUT_LEFT) == 1 && nowSelect - 1 >= 0) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect--;
+			if (Keyboard_Get(KEY_INPUT_DOWN) == 1 && nowSelect != 2) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect = 2;
+			if (Keyboard_Get(KEY_INPUT_UP) == 1 && nowSelect != 0) PlaySoundMem(Sounds[1], DX_PLAYTYPE_BACK), nowSelect = 0;
+			if (Keyboard_Get(KEY_INPUT_Z) == 1 || Keyboard_Get(KEY_INPUT_ESCAPE) == 1) {
+				level[1] = nowSelect;
+				nowSelect = 1;
+				return MENU_GAME_TYPE;
+			}
+			if (Keyboard_Get(KEY_INPUT_X) == 1 || Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				GameInit(1);
+				if (nowSelect == 1) level[1] = 5;
+				if (nowSelect == 2) level[1] = 10;
+				SpeedUpdate(level[1]);
+				return GAME_B;
+			}
+		}
+
+		for (int i = 0; i < 3; i++) {
+			if (TopScores[nowSelect + 3].name[i][0] != '\0') DrawStringB(4, 13 + i, TopScores[nowSelect + 3].name[i]);
+			if (TopScores[nowSelect + 3].score[i] != 0) drawNumbers(12, 13 + i, TopScores[nowSelect + 3].score[i], 6);
+		}
+
+		if (WaitingFlug) {
+			countWait++;
+			if (CheckHitKeyAll()) countWait = 0;
+			if (countWait > 9000) count = 0;
+			if (countWait > MAX_WAIT) {
+				StopSoundMem(Musics[1 + _music]);
+				SoftInit();
+				return START_UP;
+			}
+		}
+
+		count >= 36 ? count = 0 : count++;
 
 		break;
 	case GAME_A:
@@ -733,6 +800,8 @@ char SceneSwitch(char Scene)
 				}
 			}
 			count++;
+			if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1)
+				return MENU_A;
 		}
 		if (_gameover) {
 			gameOver(count, 25);
@@ -769,6 +838,121 @@ char SceneSwitch(char Scene)
 				nowEntering = 0;
 				wordin = '\0';
 				return MENU_A;
+			}
+		}
+
+		if (_pause || _gameover) {
+			if (WaitingFlug) {
+				countWait++;
+				if (CheckHitKeyAll()) countWait = 0;
+				// if (countWait > 9000) count = 0;
+				if (countWait > MAX_WAIT) {
+					StopSoundMem(Musics[1 + _music]);
+					SoftInit();
+					return START_UP;
+				}
+			}
+		}
+
+		
+
+		break;
+	case GAME_B:
+		EnterPause();
+		drawNumbers(13, 3, score, 6);
+		drawNumbers(16, 7, level[1], 2);
+		drawNumbers(15, 10, types, 3);
+		drawNumbers(15, 13, (int)(timer / 60), 1);
+		drawNumbers(17, 13, timer >= 60 ? timer - 60 : timer, 2);
+		if ((timer >= 60 && timer - 60 < 10) || timer < 10) SetStagePart(17, 13, BC_0);
+
+
+		for (int i = 0; i < FIELD_HEIGHT; i++)
+			for (int j = 2; j < FIELD_WIDTH + 2; j++)
+				if (field[i][j - 2] != TRNS) SetStagePart(j, i, field[i][j - 2]);
+
+		if (!_pause && !_gameover) {
+			wordin = tolower(GetInputChar(TRUE));
+			if (words[wordSelect][nowIn] == wordin && nowIn < 11) {
+				inWords[nowIn++] = words[wordSelect][nowIn];
+				score++;
+				PlaySoundMem(Sounds[4], DX_PLAYTYPE_BACK);
+			}
+			else if (wordin != NULL && wordin >= CTRL_CODE_CMP) {
+				PlaySoundMem(Sounds[6], DX_PLAYTYPE_BACK);
+				for (int i = 0; i < nowSelect + 1; i++)
+					if (wordY + 1 < 18 && field[wordY + 1][0] == NONE) wordY++;
+			}
+
+			EnteredWord(1);
+
+			DrawStringB(2, wordY, words[wordSelect]);
+			DrawStringG(2, wordY, inWords);
+
+			if (count % speed == 0) {
+				if (wordY + 1 < 18 && field[wordY + 1][0] == NONE) wordY++;// , count = 1;
+				else {
+					for (int i = 0; i < FIELD_HEIGHT; i++)
+						for (int j = 0; j < FIELD_WIDTH; j++)
+							field[i][j] = GetStagePart(j + 2, i);
+					wordSelect = GetRand(WM);
+					_wordsize = (unsigned char)strlen(words[wordSelect]);
+					wordY = 0; nowIn = 0;
+					for (int i = 0; i < 11; i++)
+						inWords[i] = '\0';
+					PlaySoundMem(Sounds[5], DX_PLAYTYPE_BACK);
+				}
+				if (field[0][0] != NONE || timer < 0) {
+					StopSoundMem(Musics[1 + _music]);
+					PlaySoundMem(Sounds[8], DX_PLAYTYPE_BACK);
+					_gameover = 1;
+					count = 0;
+				}
+			}
+			if (count % 60 == 0) {
+				timer--;
+			}
+			count++;
+			if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1)
+				return MENU_B;
+		}
+
+		
+		if (_gameover) {
+			gameOver(count, 25);
+			if (count < 150) count++;
+			else if (Keyboard_Get(KEY_INPUT_RETURN) == 1 || Mouse_Get(M_LEFT) == 1) {
+				for (int i = 0; i < 3; i++)
+					if (TopScores[nowSelect + 3].score[i] < score) {
+						_topscore = i + 1;
+						i = 3;
+					}
+				if (_topscore > 0) {
+					if (_topscore == 1) {
+						TopScores[nowSelect + 3].score[_topscore + 1] = TopScores[nowSelect + 3].score[_topscore];
+						strcpyDx(TopScores[nowSelect + 3].name[_topscore + 1], TopScores[nowSelect + 3].name[_topscore]);
+						TopScores[nowSelect + 3].score[_topscore] = TopScores[nowSelect + 3].score[_topscore - 1];
+						strcpyDx(TopScores[nowSelect + 3].name[_topscore], TopScores[nowSelect + 3].name[_topscore - 1]);
+					}
+					if (_topscore == 2) {
+						TopScores[nowSelect + 3].score[_topscore] = TopScores[nowSelect + 3].score[_topscore - 1];
+						strcpyDx(TopScores[nowSelect + 3].name[_topscore], TopScores[nowSelect + 3].name[_topscore - 1]);
+					}
+					TopScores[nowSelect + 3].score[_topscore - 1] = score;
+
+
+					// strcpyDx(TopScores[nowSelect].name[_topscore - 1], "");
+
+					for (int i = 0; i <= MAX_NAME_LENGTH; i++)
+						TopScores[nowSelect + 3].name[_topscore - 1][i] = '\0';
+
+
+					PlaySoundMem(Musics[5], DX_PLAYTYPE_LOOP);
+				}
+				else PlaySoundMem(Musics[1 + _music], DX_PLAYTYPE_LOOP);
+				nowEntering = 0;
+				wordin = '\0';
+				return MENU_B;
 			}
 		}
 
