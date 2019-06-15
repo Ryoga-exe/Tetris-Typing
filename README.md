@@ -17,7 +17,7 @@
  ![Scrn shot1](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_2.png)
 
 ## How To Download
-> Just Download 'Release' File. 'TetrisTyping.exe' is App.
+> Just Download `Release` File. 'TetrisTyping.exe' is App.
 -----
 ### このプログラムは[DxLib](https://dxlib.xsrv.jp/)を使用しています。ですが、一切画像ファイルを使用していません。
 ##### ※多少スパゲッティコード
@@ -31,4 +31,4 @@
 > TYPE-B は、タイムアタックモードです。（スコアアタック）
 
 ## ダウンロード方法
-> 'Release' ファイルをダウンロードするだけです。
+> `Release` ファイルをダウンロードするだけです。
