@@ -3,12 +3,12 @@
 ##### And spaghetti program. (**a little bit**)
 
 ## About This App.
-> This app is a typing game like *Tetris*.
-> Basically, the rule of this game is TETRIS + TYPING-GAME.
-> Type words before they are dropped. 
-> If the words reach the top of the screen, GAME OVER...
-> TYPE-A is Endless Mode.
-> TYPE-B is Time Attack Mode. (Score Attack)
+> This app is a typing game like *Tetris*.  
+> Basically, the rule of this game is TETRIS + TYPING-GAME.  
+> Type words before they are dropped.  
+> If the words reach the top of the screen, GAME OVER...  
+> TYPE-A is Endless Mode.  
+> TYPE-B is Time Attack Mode. (Score Attack)  
 
 
 ## Screen Shots
@@ -23,12 +23,12 @@
 ##### ※多少スパゲッティコード
 
 ## このAppについて
-> このAppは*テトリス*に似たタイピングゲームです。
-> 基本的には、テトリスのルールとタイピングゲームの組み合わせです。
-> 単語が落ちてくる前に、タイプしてください。
-> 単語が一番上に到達してしまうとゲームオーバーです。
-> TYPE-A は、エンドレスモードです。
-> TYPE-B は、タイムアタックモードです。（スコアアタック）
+> このAppは*テトリス*に似たタイピングゲームです。  
+> 基本的には、テトリスのルールとタイピングゲームの組み合わせです。  
+> 単語が落ちてくる前に、タイプしてください。  
+> 単語が一番上に到達してしまうとゲームオーバーです。  
+> TYPE-A は、エンドレスモードです。  
+> TYPE-B は、タイムアタックモードです。（スコアアタック）  
 
 ## ダウンロード方法
 > `Release` ファイルをダウンロードするだけです。
