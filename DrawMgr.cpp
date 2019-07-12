@@ -37,14 +37,14 @@ void SetStageScene(char Scene)
 	case COPYRIGHT: {
 		int _stage[STAGE_HEIGHT][STAGE_WIDTH] = {
 		{NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE},
-		{QOTE, BC_T, BC_M, NONE, BC_A, BC_N, BC_D, NONE, CRGT, BC_2, BC_0, BC_1, BC_9, NONE, BC_R, BC_Y, BC_S, BC_T, BC_D, COMA},
+		{QOTE, BC_T, BC_M, NONE, BC_A, BC_N, BC_D, NONE, CRGT, BC_2, BC_0, BC_1, BC_9, NONE, BC_R, BC_Y, BC_O, BC_G, BC_A, COMA},
 		{NONE, NONE, NONE, NONE, BC_T, BC_E, BC_T, BC_R, BC_I, BC_S, NONE, BC_T, BC_Y, BC_P, BC_I, BC_N, BC_G, NONE, NONE, NONE},
 		{NONE, NONE, NONE, NONE, NONE, BC_L, BC_I, BC_C, BC_E, BC_N, BC_S, BC_E, BC_D, NONE, BC_T, BC_O, NONE, NONE, NONE, NONE},
-		{NONE, NONE, NONE, NONE, BC_R, BC_Y, BC_O, BC_S, BC_T, BC_U, BC_D, BC_I, BC_O, NONE, BC_A, BC_N, BC_D, NONE, NONE, NONE},
+		{NONE, NONE, NONE, NONE, BC_R, BC_Y, BC_O, BC_G, BC_A, BCPR, BC_E, BC_X, BC_E, NONE, BC_A, BC_N, BC_D, NONE, NONE, NONE},
 		{NONE, NONE, NONE, BC_S, BC_U, BC_B, BCHY, BC_L, BC_I, BC_C, BC_E, BC_N, BC_S, BC_E, BC_D, NONE, BC_T, BC_O, NONE, NONE},
-		{NONE, NONE, NONE, NONE, NONE, NONE, BC_T, BC_A, BC_I, BC_R, BC_Y, BC_O, BC_S, BC_T, BCPR, NONE, NONE, NONE, NONE, NONE},
+		{NONE, NONE, NONE, NONE, NONE, NONE, BC_T, BC_A, BC_I, BC_R, BC_Y, BC_S, BC_T, BC_D, BCPR, NONE, NONE, NONE, NONE, NONE},
 		{NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE},
-		{NONE, CRGT, BC_2, BC_0, BC_1, BC_9, NONE, BC_R, BC_Y, BC_O, BC_S, BC_T, BC_U, BC_D, BC_I, BC_O, NONE, BC_D, BC_O, BC_T},
+		{NONE, CRGT, BC_2, BC_0, BC_1, BC_9, NONE, BC_R, BC_Y, BC_O, BC_G, BC_A, BCPR, BC_E, BC_X, BC_E, NONE, BC_D, BC_O, BC_T},
 		{NONE, NONE, NONE, NONE, NONE, NONE, NONE, BC_N, BC_E, BC_T, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE},
 		{NONE, NONE, NONE, CRGT, BC_2, BC_0, BC_1, BC_9, NONE, NTD0, NTD1, NTD2, NTD3, NTD4, NTD5, NTD6, NONE, NONE, NONE, NONE},
 		{NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE},
@@ -1417,27 +1417,27 @@ void drawStage()
 			} break;
 			case NTD2: {
 				char part[PART_SIZE][PART_SIZE] = {
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,3,3,3},
-					{0,0,0,0,3,3,0,0},
-					{0,0,0,0,3,3,0,0},
-					{3,3,0,0,0,3,3,0},
-					{0,3,3,0,0,0,0,3},
+					{3,3,0,0,3,3,0,0},
 					{0,3,3,0,3,3,0,0},
-					{0,3,3,0,3,3,0,0},
+					{0,3,3,0,0,3,3,3},
+					{0,3,3,0,0,0,0,0},
 					{3,3,0,0,0,3,3,3},
 				};
 				drawPart(X, Y, part);
 			} break;
 			case NTD3: {
 				char part[PART_SIZE][PART_SIZE] = {
-					{3,0,0,0,0,0,0,0},
-					{3,3,0,0,3,3,0,0},
-					{3,3,0,3,3,3,3,0},
-					{0,0,0,0,3,3,0,0},
-					{3,0,0,0,3,3,0,0},
-					{3,3,0,0,3,3,0,0},
-					{3,3,0,0,3,3,0,0},
-					{3,0,0,0,3,3,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{3,3,0,0,0,0,0,0},
+					{3,3,0,0,3,3,3,3},
+					{3,3,0,3,3,0,0,3},
+					{3,3,0,3,3,0,0,3},
+					{3,3,0,3,3,0,0,3},
+					{3,0,0,0,3,3,3,3},
 				};
 				drawPart(X, Y, part);
 			} break;
@@ -1446,24 +1446,24 @@ void drawStage()
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0},
-					{3,3,0,0,3,3,0,0},
-					{3,3,0,0,3,3,0,3},
-					{3,3,0,0,3,3,0,3},
-					{3,3,0,3,3,3,0,3},
-					{0,3,3,0,3,3,0,0},
+					{3,0,0,0,0,0,3,3},
+					{3,0,0,0,0,3,3,0},
+					{3,0,0,0,0,3,3,3},
+					{3,0,3,3,0,3,3,0},
+					{3,0,3,3,0,0,3,3},
 				};
 				drawPart(X, Y, part);
 			} break;
 			case NTD5: {
 				char part[PART_SIZE][PART_SIZE] = {
-					{0,0,0,3,3,0,3,3},
-					{0,0,0,3,3,0,3,3},
-					{0,0,0,3,3,0,0,0},
-					{3,3,3,3,3,0,3,3},
-					{3,0,0,3,3,0,3,3},
-					{3,0,0,3,3,0,3,3},
-					{3,0,0,3,3,0,3,3},
-					{3,3,3,3,3,0,3,3},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{3,3,0,0,3,3,0,0},
+					{0,3,3,0,0,3,3,3},
+					{3,3,3,0,0,0,3,3},
+					{0,0,0,0,0,3,3,3},
+					{3,3,3,0,3,3,3,0},
 				};
 				drawPart(X, Y, part);
 			} break;
@@ -1472,11 +1472,11 @@ void drawStage()
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0},
-					{0,0,3,3,3,3,0,0},
-					{0,3,3,0,0,3,3,0},
-					{0,3,3,0,0,3,3,0},
-					{0,3,3,0,0,3,3,0},
-					{0,0,3,3,3,3,0,0},
+					{3,3,0,0,3,3,3,0},
+					{3,0,0,3,3,0,0,3},
+					{0,0,0,3,3,3,3,3},
+					{3,0,0,3,3,0,0,0},
+					{3,3,0,0,3,3,3,3},
 				};
 				drawPart(X, Y, part);
 			} break;
@@ -4083,13 +4083,13 @@ void drawStage()
 			case BCAN: {
 				char part[PART_SIZE][PART_SIZE] = {
 				{0,0,0,0,0,0,0,0},
-				{0,0,3,3,0,0,0,0},
-				{0,3,0,0,3,0,0,0},
-				{0,3,0,3,0,0,0,0},
-				{0,0,3,0,0,3,0,0},
-				{0,3,0,3,0,3,0,0},
-				{3,0,0,0,3,0,0,0},
-				{0,3,3,3,0,3,3,0},
+				{0,0,0,0,0,0,0,0},
+				{0,0,3,3,3,0,0,0},
+				{0,3,3,0,3,3,0,0},
+				{0,0,3,3,3,0,3,3},
+				{0,3,3,0,3,3,3,0},
+				{3,3,0,0,0,3,3,0},
+				{0,3,3,3,3,0,3,3},
 				};
 				drawPart(X, Y, part);
 			} break;
