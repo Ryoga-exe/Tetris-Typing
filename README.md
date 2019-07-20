@@ -15,6 +15,8 @@
  ![Scrn shot0](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_0.png)
  ![Scrn shot1](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_1.png)
  ![Scrn shot1](https://github.com/Ryoga-exe/Tetris-Typing/blob/master/screen%20shots/screenshot_2.png)
+ 
+ [Youtube](https://youtu.be/lItXtET630Q)
 
 ## How To Download
 > Just Download `Release` File. 'TetrisTyping.exe' is App.
