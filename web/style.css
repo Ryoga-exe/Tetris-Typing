@@ -1,0 +1,60 @@
+*{
+    box-sizing: border-box;
+}
+
+::selection {
+    background-color: rgba(230, 230, 230, 0.3);
+    color: #fff;
+}
+
+:root {
+    --header-bg: #222;
+    --header-col: #CCC;
+    --bg: #f5f5f5;
+
+    --canvas-W: 160px;
+    --canvas-H: 144px;
+    --zoom-rate: 3;
+}
+
+.selection-disabled {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, メイリオ, Osaka, 'MS PGothic', arial, helvetica, sans-serif;
+    background-color: var(--bg);
+}
+
+header{
+    width: 100%;
+    background-color: var(--header-bg);
+}
+
+header p {
+    margin: 0;
+    color: var(--header-col);
+    font-size: 42px;
+    text-align: center;
+}
+
+#game {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#mycanvas {
+    background-color: #000;
+    user-select: none;
+    /*
+    width: calc(var(--canvas-W) * var(--zoom-rate));
+    height: calc(var(--canvas-H) * var(--zoom-rate));
+    */
+}
